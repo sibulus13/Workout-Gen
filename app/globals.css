@@ -1,0 +1,263 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Background colors */
+  --background: #fafafa;
+  --foreground: #0a0a0a;
+
+  /* Card/Surface colors */
+  --card: #ffffff;
+  --card-hover: #f9f9f9;
+  --card-border: #e5e5e5;
+
+  /* Accent/Primary colors */
+  --accent: #000000;
+  --accent-hover: #1a1a1a;
+  --accent-foreground: #ffffff;
+
+  /* Muted/Secondary colors */
+  --muted: #737373;
+  --muted-bg: #f5f5f5;
+  --muted-hover: #e5e5e5;
+  --muted-foreground: #525252;
+
+  /* Input colors */
+  --input-border: #d4d4d4;
+  --input-focus: #a3a3a3;
+  --input-bg: #ffffff;
+
+  /* State colors - minimal, monochrome */
+  --selected-bg: #f5f5f5;
+  --selected-border: #000000;
+  --hover-bg: #fafafa;
+
+  /* Destructive */
+  --destructive: #dc2626;
+  --destructive-hover: #b91c1c;
+  --destructive-foreground: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Background colors */
+    --background: #0a0a0a;
+    --foreground: #fafafa;
+
+    /* Card/Surface colors */
+    --card: #141414;
+    --card-hover: #1a1a1a;
+    --card-border: #262626;
+
+    /* Accent/Primary colors */
+    --accent: #fafafa;
+    --accent-hover: #e5e5e5;
+    --accent-foreground: #0a0a0a;
+
+    /* Muted/Secondary colors */
+    --muted: #a3a3a3;
+    --muted-bg: #1a1a1a;
+    --muted-hover: #262626;
+    --muted-foreground: #d4d4d4;
+
+    /* Input colors */
+    --input-border: #404040;
+    --input-focus: #737373;
+    --input-bg: #141414;
+
+    /* State colors - minimal, monochrome */
+    --selected-bg: #1a1a1a;
+    --selected-border: #fafafa;
+    --hover-bg: #171717;
+
+    /* Destructive */
+    --destructive: #ef4444;
+    --destructive-hover: #dc2626;
+    --destructive-foreground: #fafafa;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Design System Component Classes */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply font-medium py-2.5 px-4 rounded transition-colors duration-150 outline-none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: var(--muted-bg);
+    color: var(--foreground);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--muted-hover);
+  }
+
+  .btn-destructive {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+
+  .btn-destructive:hover:not(:disabled) {
+    background: var(--destructive-hover);
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-3 py-2 rounded outline-none transition-colors duration-150;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--foreground);
+  }
+
+  .input:focus {
+    border-color: var(--input-focus);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    @apply rounded;
+  }
+
+  .card-hover:hover {
+    background: var(--card-hover);
+  }
+
+  /* Selection items (radio/checkbox style) */
+  .selectable {
+    @apply p-4 rounded cursor-pointer transition-all border;
+    border-color: var(--input-border);
+  }
+
+  .selectable:hover {
+    background: var(--hover-bg);
+  }
+
+  .selectable.selected {
+    background: var(--selected-bg);
+    border-color: var(--selected-border);
+  }
+
+  /* Radio/Checkbox indicators */
+  .radio-indicator {
+    @apply w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors;
+    border-color: var(--input-border);
+  }
+
+  .radio-indicator.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .checkbox-indicator {
+    @apply w-5 h-5 rounded border-2 flex items-center justify-center transition-colors;
+    border-color: var(--input-border);
+  }
+
+  .checkbox-indicator.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* Progress indicator */
+  .progress-step {
+    @apply w-8 h-8 rounded-full flex items-center justify-center font-medium text-xs transition-colors;
+    background: var(--muted-bg);
+    color: var(--muted);
+  }
+
+  .progress-step.active {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .progress-step.completed {
+    background: var(--selected-bg);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+  }
+
+  .progress-line {
+    @apply flex-1 h-0.5 mx-2;
+    background: var(--input-border);
+  }
+
+  .progress-line.completed {
+    background: var(--accent);
+  }
+}
+
+/* Minimalist scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
+
+/* Dark mode scrollbar */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: #404040;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #525252;
+  }
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  * {
+    scrollbar-color: #404040 transparent;
+  }
+}
