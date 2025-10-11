@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
+    "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.21",
     "next": "^15.0.3",
     "react": "^18.3.1",
