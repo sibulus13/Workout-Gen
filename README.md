@@ -4,7 +4,7 @@ An AI-powered web application that generates personalized workout plans based on
 
 ## Features
 
-### MVP (Current Release)
+### Core Features
 - ✅ Personalized workout plan generation
 - ✅ User profile input (age, gender, height, weight)
 - ✅ Fitness level and goal selection
@@ -19,7 +19,7 @@ An AI-powered web application that generates personalized workout plans based on
 - ✅ Exercise execution instructions with tempo guidance
 - ✅ Duration estimates for exercises and sessions
 
-### Alpha Release (Current)
+### Alpha Release
 - ✅ Favorite exercise selector
 - ✅ Session summaries with duration and intensity levels
 - ✅ Target muscle group indicators
@@ -30,25 +30,24 @@ An AI-powered web application that generates personalized workout plans based on
 - ✅ Plan timestamp tracking
 - ✅ Secondary fitness goal selector
 
+### Beta Release (Current)
+- ✅ Side-by-side chat interface for workout adjustments
+- ✅ Toggleable chat panel that slides in from the right
+- ✅ Natural language plan modifications via AI
+- ✅ PDF export with professional formatting
+- ✅ Save/load workout history (up to 20 plans)
+- ✅ Rename and manage saved workouts
+- ✅ Seamless switching between plan view and history
+
 ### Upcoming Features
 
-#### Beta Release
-- Chat interface for workout adjustments
-- Natural language plan modifications
-- PDF export
-- Save/load workout history
-
-#### Beta Release
-- Chat interface for workout adjustments
-- Natural language plan modifications
-- PDF export
-- Save/load workout history
-
 #### Production Release
-- Hevy API integration
-- Progress tracking
-- User accounts
-- Advanced analytics
+- Hevy API integration for workout logging
+- Progress tracking with charts and analytics
+- User accounts with cloud sync
+- Advanced analytics and insights
+- Mobile app companion
+- Social features (share workouts, follow trainers)
 
 ## Getting Started
 
@@ -113,12 +112,42 @@ vercel env add ANTHROPIC_API_KEY
 vercel --prod
 ```
 
+## How to Use
+
+1. **Generate a Workout Plan**
+   - Fill out the 4-step questionnaire with your profile, goals, and preferences
+   - Click "Generate Workout Plan" to create your personalized plan
+   - Your plan is automatically saved
+
+2. **View Your Plan**
+   - Browse through your workout sessions in the horizontal scrollable view
+   - Export your plan as PDF, JSON, CSV, or TXT
+   - See exercise details, execution instructions, and duration estimates
+
+3. **Modify Your Plan (Beta)**
+   - Click "Modify Plan" button to open the chat panel on the right side
+   - The chat panel slides in while you view your workout plan
+   - Make changes using natural language:
+     - "Add pull-ups to Day 2"
+     - "Change the bench press from 4 sets to 5 sets"
+     - "Replace squats with leg press"
+   - The AI will update your plan in real-time and explain the changes
+   - Close the chat panel when done to see your full workout
+
+4. **Browse History (Beta)**
+   - Click the "History" button to view your saved workouts
+   - Access your last 20 workout plans
+   - Rename saved workouts for easy identification
+   - Load any previous plan with one click
+   - Delete old plans you no longer need
+
 ## Tech Stack
 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **AI**: Anthropic Claude 3.5 Sonnet
+- **PDF Generation**: jsPDF
 - **Deployment**: Vercel
 
 ## Project Structure
@@ -126,18 +155,23 @@ vercel --prod
 ```
 workout-gen/
 ├── app/
-│   ├── api/generate-workout/    # API route for AI generation
-│   ├── globals.css              # Global styles
-│   ├── layout.tsx               # Root layout
-│   └── page.tsx                 # Main page
+│   ├── api/
+│   │   ├── generate-workout/     # API route for AI generation
+│   │   └── modify-workout/       # API route for chat modifications
+│   ├── globals.css               # Global styles
+│   ├── layout.tsx                # Root layout
+│   └── page.tsx                  # Main page with tabbed interface
 ├── components/
-│   ├── WorkoutForm.tsx          # 4-step paginated profile form
-│   └── WorkoutDisplay.tsx       # Horizontal scrollable workout display
+│   ├── WorkoutForm.tsx           # 4-step paginated profile form
+│   ├── WorkoutDisplay.tsx        # Horizontal scrollable workout display
+│   ├── WorkoutChat.tsx           # Chat interface for plan modifications
+│   └── WorkoutHistory.tsx        # Workout history management
 ├── lib/
-│   ├── profileStorage.ts        # LocalStorage profile management
-│   └── workoutPlanStorage.ts    # LocalStorage workout plan persistence
+│   ├── profileStorage.ts         # LocalStorage profile management
+│   ├── workoutPlanStorage.ts     # LocalStorage workout plan persistence
+│   └── workoutHistoryStorage.ts  # LocalStorage workout history management
 ├── types/
-│   └── workout.ts               # TypeScript type definitions
+│   └── workout.ts                # TypeScript type definitions
 └── package.json
 ```
 

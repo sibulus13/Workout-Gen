@@ -3,14 +3,21 @@
 import { useState, useEffect } from 'react';
 import WorkoutForm from '@/components/WorkoutForm';
 import WorkoutDisplay from '@/components/WorkoutDisplay';
+import WorkoutChat from '@/components/WorkoutChat';
+import WorkoutHistory from '@/components/WorkoutHistory';
 import type { UserProfile, WorkoutPlan } from '@/types/workout';
 import { workoutPlanStorage } from '@/lib/workoutPlanStorage';
+import { workoutHistoryStorage } from '@/lib/workoutHistoryStorage';
+
+type ViewMode = 'plan' | 'chat' | 'history';
 
 export default function Home() {
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [planTimestamp, setPlanTimestamp] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('plan');
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Load saved workout plan on mount
   useEffect(() => {
@@ -52,8 +59,9 @@ export default function Home() {
       setWorkoutPlan(plan);
       setPlanTimestamp(new Date().toISOString());
 
-      // Save to localStorage
+      // Save to localStorage and history
       workoutPlanStorage.save(plan);
+      workoutHistoryStorage.save(plan);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -64,7 +72,23 @@ export default function Home() {
   const handleClearPlan = () => {
     setWorkoutPlan(null);
     setPlanTimestamp(null);
+    setViewMode('plan');
     workoutPlanStorage.clear();
+  };
+
+  const handlePlanUpdate = (updatedPlan: WorkoutPlan) => {
+    setWorkoutPlan(updatedPlan);
+    setPlanTimestamp(new Date().toISOString());
+    workoutPlanStorage.save(updatedPlan);
+    workoutHistoryStorage.save(updatedPlan);
+  };
+
+  const handleLoadFromHistory = (plan: WorkoutPlan) => {
+    setWorkoutPlan(plan);
+    setPlanTimestamp(new Date().toISOString());
+    workoutPlanStorage.save(plan);
+    setViewMode('plan');
+    setIsChatOpen(false);
   };
 
   return (
@@ -98,19 +122,89 @@ export default function Home() {
             <WorkoutForm onGenerate={handleGenerate} isLoading={isLoading} />
           </div>
         ) : (
-          <div className="max-w-6xl mx-auto h-full flex flex-col">
-            {/* Plan timestamp indicator */}
-            {planTimestamp && (
-              <div className="mb-4 text-xs text-[--muted] text-center">
-                Generated {new Date(planTimestamp).toLocaleDateString()} at {new Date(planTimestamp).toLocaleTimeString()}
+          <div className="mx-auto h-full flex flex-col" style={{ maxWidth: isChatOpen ? '100%' : '1280px' }}>
+            {/* Plan timestamp and controls */}
+            <div className="mb-4 flex items-center justify-between px-4">
+              <div className="flex items-center gap-4">
+                {planTimestamp && (
+                  <div className="text-xs text-[--muted]">
+                    Generated {new Date(planTimestamp).toLocaleDateString()} at {new Date(planTimestamp).toLocaleTimeString()}
+                  </div>
+                )}
               </div>
-            )}
 
-            <div className="flex-1 overflow-y-auto">
-              <WorkoutDisplay plan={workoutPlan} />
+              <div className="flex items-center gap-2">
+                {/* History Button */}
+                <button
+                  onClick={() => {
+                    setViewMode(viewMode === 'history' ? 'plan' : 'history');
+                    setIsChatOpen(false);
+                  }}
+                  className={`py-2 px-4 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                    viewMode === 'history'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                  title="View workout history"
+                >
+                  <svg className="w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  History
+                </button>
+
+                {/* Chat Toggle Button */}
+                {viewMode === 'plan' && (
+                  <button
+                    onClick={() => setIsChatOpen(!isChatOpen)}
+                    className={`py-2 px-4 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                      isChatOpen
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`}
+                    title={isChatOpen ? 'Close chat' : 'Open chat to modify plan'}
+                  >
+                    <svg className="w-5 h-5" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                      <path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    {isChatOpen ? 'Close Chat' : 'Modify Plan'}
+                  </button>
+                )}
+              </div>
             </div>
 
-            <div className="pt-6">
+            {/* Main Content Area */}
+            <div className="flex-1 overflow-hidden flex gap-4 px-4">
+              {viewMode === 'history' ? (
+                <div className="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 overflow-hidden">
+                  <WorkoutHistory onLoadPlan={handleLoadFromHistory} />
+                </div>
+              ) : (
+                <>
+                  {/* Workout Plan Display */}
+                  <div className={`transition-all duration-300 overflow-hidden ${isChatOpen ? 'flex-1' : 'flex-1'}`}>
+                    <div className="h-full overflow-y-auto">
+                      <WorkoutDisplay plan={workoutPlan} />
+                    </div>
+                  </div>
+
+                  {/* Chat Panel - Slides in from right */}
+                  <div
+                    className={`transition-all duration-300 overflow-hidden ${
+                      isChatOpen ? 'w-96 opacity-100' : 'w-0 opacity-0'
+                    }`}
+                  >
+                    {isChatOpen && (
+                      <div className="h-full">
+                        <WorkoutChat plan={workoutPlan} onPlanUpdate={handlePlanUpdate} />
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="pt-6 px-4">
               <button
                 onClick={handleClearPlan}
                 className="w-full btn btn-primary font-medium py-3 px-4 rounded transition-colors duration-150"
