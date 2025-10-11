@@ -627,7 +627,7 @@ export default function WorkoutForm({ onGenerate, isLoading }: WorkoutFormProps)
             <div>
               <label className="block text-sm font-medium mb-3">Training Techniques (Optional)</label>
               <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                Select any specific training techniques you'd like to include
+                Select any specific training techniques you&apos;d like to include
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[

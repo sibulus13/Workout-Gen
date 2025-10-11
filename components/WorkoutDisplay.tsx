@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import type { WorkoutPlan } from '@/types/workout';
 import { jsPDF } from 'jspdf';
 

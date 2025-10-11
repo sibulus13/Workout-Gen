@@ -113,7 +113,7 @@ Return the workout plan as a valid JSON object with this exact structure:
         jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
       }
       workoutPlan = JSON.parse(jsonText);
-    } catch (parseError) {
+    } catch {
       console.error('Failed to parse Claude response:', content.text);
       throw new Error('Failed to parse workout plan from AI response');
     }

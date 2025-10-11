@@ -157,10 +157,10 @@ export default function Home() {
                 {viewMode === 'plan' && (
                   <button
                     onClick={() => setIsChatOpen(!isChatOpen)}
-                    className={`py-2 px-4 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                    className={`py-2 px-4 rounded-lg font-medium transition-all flex items-center gap-2 shadow-sm ${
                       isChatOpen
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
                     }`}
                     title={isChatOpen ? 'Close chat' : 'Open chat to modify plan'}
                   >
@@ -174,7 +174,7 @@ export default function Home() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 overflow-hidden flex gap-4 px-4">
+            <div className="flex-1 overflow-hidden flex px-4">
               {viewMode === 'history' ? (
                 <div className="flex-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 overflow-hidden">
                   <WorkoutHistory onLoadPlan={handleLoadFromHistory} />
@@ -182,7 +182,7 @@ export default function Home() {
               ) : (
                 <>
                   {/* Workout Plan Display */}
-                  <div className={`transition-all duration-300 overflow-hidden ${isChatOpen ? 'flex-1' : 'flex-1'}`}>
+                  <div className="flex-1 transition-all duration-300 overflow-hidden">
                     <div className="h-full overflow-y-auto">
                       <WorkoutDisplay plan={workoutPlan} />
                     </div>
@@ -191,7 +191,7 @@ export default function Home() {
                   {/* Chat Panel - Slides in from right */}
                   <div
                     className={`transition-all duration-300 overflow-hidden ${
-                      isChatOpen ? 'w-96 opacity-100' : 'w-0 opacity-0'
+                      isChatOpen ? 'w-96 opacity-100 pl-4' : 'w-0 opacity-0'
                     }`}
                   >
                     {isChatOpen && (

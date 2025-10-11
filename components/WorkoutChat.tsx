@@ -71,7 +71,7 @@ export default function WorkoutChat({ plan, onPlanUpdate }: WorkoutChatProps) {
       if (data.updatedPlan) {
         onPlanUpdate(data.updatedPlan);
       }
-    } catch (error) {
+    } catch {
       const errorMessage: Message = {
         role: 'assistant',
         content: 'Sorry, I encountered an error while processing your request. Please try again.'
