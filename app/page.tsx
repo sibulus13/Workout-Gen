@@ -113,7 +113,7 @@ export default function Home() {
             <div className="pt-6">
               <button
                 onClick={handleClearPlan}
-                className="w-full bg-[--accent] hover:bg-[--accent-hover] text-white font-medium py-3 px-4 rounded transition-colors duration-150"
+                className="w-full btn btn-primary font-medium py-3 px-4 rounded transition-colors duration-150"
               >
                 Generate New Plan
               </button>
