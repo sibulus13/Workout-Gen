@@ -925,3 +925,4 @@ export default function WorkoutForm({ onGenerate, isLoading }: WorkoutFormProps)
     </form>
   );
 }
+// Test
