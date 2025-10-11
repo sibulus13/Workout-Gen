@@ -77,7 +77,7 @@ export default function WorkoutForm({ onGenerate, isLoading }: WorkoutFormProps)
           if (prev === '2') return '3';
           return '2';
         });
-      }, 500);
+      }, 1000);
 
       return () => clearInterval(dotsInterval);
     } else {
@@ -90,7 +90,7 @@ export default function WorkoutForm({ onGenerate, isLoading }: WorkoutFormProps)
     if (isLoading && currentStep === 5) {
       const messageInterval = setInterval(() => {
         setLoadingMessageIndex(prev => (prev + 1) % loadingMessages.length);
-      }, 2500);
+      }, 5500);
 
       return () => clearInterval(messageInterval);
     } else {
