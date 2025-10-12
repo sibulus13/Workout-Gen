@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import type { WorkoutPlan } from '@/types/workout';
 import { jsPDF } from 'jspdf';
 
@@ -10,6 +10,10 @@ interface WorkoutDisplayProps {
 
 export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
   const [collapsedSessions, setCollapsedSessions] = useState<Set<number>>(new Set());
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const toggleSession = (sessionIndex: number) => {
     const newCollapsed = new Set(collapsedSessions);
@@ -19,6 +23,29 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
       newCollapsed.add(sessionIndex);
     }
     setCollapsedSessions(newCollapsed);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!scrollContainerRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+    setScrollLeft(scrollContainerRef.current.scrollLeft);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollContainerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollContainerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
   };
 
   const exportAsJSON = () => {
@@ -343,7 +370,15 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
 
       {/* Workout Sessions - Vertical stack on mobile, horizontal scroll on desktop */}
       <div>
-        <h3 className="text-lg md:text-xl font-semibold mb-3">Your Workout Sessions</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg md:text-xl font-semibold">Your Workout Sessions</h3>
+          <div className="hidden md:flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+            <svg className="w-4 h-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+            </svg>
+            Drag to scroll
+          </div>
+        </div>
 
         {/* Mobile: Vertical Stack */}
         <div className="md:hidden space-y-3">
@@ -357,7 +392,7 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
                 {/* Collapsible Header */}
                 <button
                   onClick={() => toggleSession(idx)}
-                  className="w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
+                  className="w-full p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 active:scale-[0.99]"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -366,12 +401,12 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
                       </h4>
                       <div className="flex flex-wrap items-center gap-2">
                         {session.totalDurationMinutes && (
-                          <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded">
+                          <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded transition-colors">
                             ⏱ ~{session.totalDurationMinutes} min
                           </span>
                         )}
                         {session.intensity && (
-                          <span className={`text-xs px-2 py-1 rounded font-medium ${
+                          <span className={`text-xs px-2 py-1 rounded font-medium transition-colors ${
                             session.intensity === 'low' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
                             session.intensity === 'moderate' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300' :
                             session.intensity === 'high' ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300' :
@@ -386,7 +421,7 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
                       </div>
                     </div>
                     <svg
-                      className={`w-5 h-5 transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
+                      className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? '' : 'rotate-180'}`}
                       fill="none"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -399,8 +434,10 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
                   </div>
                 </button>
 
-                {/* Collapsible Content */}
-                {!isCollapsed && (
+                {/* Collapsible Content with Animation */}
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  isCollapsed ? 'max-h-0 opacity-0' : 'max-h-[2000px] opacity-100'
+                }`}>
                   <div className="px-4 pb-4 space-y-3">
                     {session.targetMuscleGroups && session.targetMuscleGroups.length > 0 && (
                       <div className="flex flex-wrap gap-1">
@@ -416,7 +453,7 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
                     {session.exercises.map((exercise, exIdx) => (
                       <div
                         key={exIdx}
-                        className="bg-white dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600"
+                        className="bg-white dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 transition-all duration-200 hover:shadow-md hover:scale-[1.02]"
                       >
                         <h5 className="font-semibold text-sm mb-2">{exercise.name}</h5>
 
@@ -456,14 +493,22 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
                       </div>
                     ))}
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
         </div>
 
         {/* Desktop: Horizontal Scroll - Hidden on mobile */}
-        <div className="hidden md:block overflow-x-auto pb-4" style={{ scrollbarWidth: 'thin' }}>
+        <div
+          ref={scrollContainerRef}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          className={`hidden md:block overflow-x-auto pb-4 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+          style={{ scrollbarWidth: 'thin' }}
+        >
           <div className="flex gap-4" style={{ minWidth: 'min-content' }}>
             {plan.sessions.map((session, idx) => (
               <div
@@ -511,7 +556,7 @@ export default function WorkoutDisplay({ plan }: WorkoutDisplayProps) {
                   {session.exercises.map((exercise, exIdx) => (
                     <div
                       key={exIdx}
-                      className="bg-white dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
                     >
                       <h5 className="font-semibold text-base mb-2">{exercise.name}</h5>
 
