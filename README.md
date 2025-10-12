@@ -1,4 +1,4 @@
-# AI Workout Plan Generator
+# Ascension.AI
 
 An AI-powered web application that generates personalized workout plans based on your fitness goals, level, and available equipment. Built with Next.js, TypeScript, and Anthropic's Claude AI.
 

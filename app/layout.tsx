@@ -3,8 +3,8 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
-  title: "AI Workout Plan Generator",
-  description: "Generate personalized workout plans powered by AI",
+  title: "Ascension.AI - AI-Powered Workout Plans",
+  description: "Generate personalized workout plans powered by AI. Customize exercises, track progress, and achieve your fitness goals with Ascension.AI",
 };
 
 export default function RootLayout({
